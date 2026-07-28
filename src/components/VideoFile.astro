@@ -1,0 +1,69 @@
+---
+// Self-hosted video. Uses the browser's native player rather than an embed,
+// so there's no third-party script, no ads, no "watch next" panel, and no
+// branding over your own work.
+//
+// preload="none" means the file isn't downloaded until someone presses play —
+// important, because the poster image is a few KB and the video is tens of MB.
+
+interface Props {
+  src: string;
+  poster?: string;
+  title: string;
+  caption?: string;
+}
+
+const { src, poster, title, caption } = Astro.props;
+---
+
+<figure class="video">
+  <video
+    controls
+    preload="none"
+    playsinline
+    poster={poster}
+    title={title}
+    width="1280"
+    height="720"
+  >
+    <source src={src} type="video/mp4" />
+    <p>
+      Your browser can't play this video.
+      <a href={src} download>Download the file</a> instead.
+    </p>
+  </video>
+
+  {
+    caption && (
+      <figcaption>
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .video {
+    margin: 2.6rem 0 0;
+    max-width: 42rem;
+  }
+
+  video {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    margin-top: 0.8rem;
+  }
+</style>

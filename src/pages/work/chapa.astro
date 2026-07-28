@@ -1,0 +1,116 @@
+---
+import Base from '../../layouts/Base.astro';
+import VideoFile from '../../components/VideoFile.astro';
+
+// Set to false until the video files are actually in public/video/ — otherwise
+// the player renders a broken source. See public/video/README.txt for the
+// ffmpeg commands to compress the recordings and pull a poster frame.
+const hasMapDemo = true;
+const hasTalkRecording = false;
+---
+
+<Base
+  title="Affordable housing access"
+  description="An interactive map of CHAPA's affordable housing applications: who applies, where they apply from, and how far they search, filterable across demographics, price, and distance."
+>
+  <article class="section">
+    <header class="page-head">
+      <p class="label">2025 · CHAPA · BU Spark! DS701</p>
+      <div>
+        <h1 class="page-title">Affordable housing access</h1>
+        <p class="lede head-lede">
+          As part of a collaboration with CHAPA and BU Spark!, I worked with classmates to analyze property data and provide insights about applicant demographics. My primary contribution to the project was an interactive map of affordable housing applications across Massachusetts, showing applicant flow lines, demographic breakdowns, and more.
+        </p>
+      </div>
+    </header>
+
+    {
+      hasMapDemo && (
+        <VideoFile
+          src="/video/MapDemoShort.mp4"
+          poster="/video/chapa-map-demo-poster.jpg"
+          title="Walkthrough of the interactive applications map built for CHAPA"
+          caption="Walkthrough of the map, recorded for a client meeting."
+        />
+      )
+    }
+
+    <div class="body">
+      <h2 class="section-heading">The map</h2>
+      <div class="prose">
+        <p>
+          The tool is a Folium and Leaflet application over four toggleable
+          layers: 109 properties, the applicant origins feeding them, and
+          roughly 750 lines connecting the two. Each property is a pie chart
+          placed at its location, sized by how many applications it received and
+          divided by the racial and ethnic composition of its applicant pool, so
+          volume and composition read at a glance without opening anything.
+        </p>
+        <p>
+          The layer that does the most work is the flow lines. Every applicant
+          origin is joined to the property they applied to, which turns an
+          abstract question — how far do people search for affordable housing? —
+          into something you can see. Hovering a flow gives the count from that
+          origin, the age distribution, and the demographic breakdown of the
+          people it represents. Opening a property gives its details alongside
+          its applicant statistics: median age and range, median distance
+          travelled and range, and the demographic composition as proportion
+          bars.
+        </p>
+        <p>
+          The remaining layers are applicant origins on their own and a price
+          heatmap, and there's a filter panel over the whole thing — minimum
+          applications, maximum price, maximum distance, maximum age — so the
+          map can be narrowed to a question rather than browsed. Filtering
+          applies across every layer at once, which is where most of the custom
+          JavaScript went; Folium will render the layers, but the
+          cross-filtering, the flow highlighting, and the pie markers all had to
+          be written on top of it.
+        </p>
+
+        <h3>Context</h3>
+        <p>
+          CHAPA is the umbrella nonprofit for affordable housing and community
+          development in Massachusetts, monitoring close to three thousand
+          permanently affordable homes. The team's brief for the semester was
+          geographic trends, demographic representation, and access disparities
+          in the homeownership portfolio: comparing where applicants lived
+          against where they applied, measuring the radius of their search, and
+          testing how those patterns differed across families, seniors, and
+          racial groups. We also looked at whether marketing strategy, listing
+          source, or the complexity of the application itself shaped who applied
+          at all.
+        </p>
+        <p>
+          The project ran through DS701 with BU Spark!, which pairs teams with
+          external partners for a semester, and was presented at Demo Day in
+          December 2025.
+        </p>
+      </div>
+    </div>
+
+    {
+      hasTalkRecording && (
+        <div class="body">
+          <h2 class="section-heading">Demo Day presentation</h2>
+          <VideoFile
+            src="/video/chapa-presentation.mp4"
+            poster="/video/chapa-presentation-poster.jpg"
+            title="CHAPA affordable housing team presentation at BU Spark! Demo Day"
+            caption="Recorded from the audience at BU Spark! Demo Day, December 2025."
+          />
+        </div>
+      )
+    }
+  </article>
+
+  <style>
+    .head-lede {
+      margin-top: 1rem;
+    }
+
+    .body {
+      margin-top: 3.2rem;
+    }
+  </style>
+</Base>

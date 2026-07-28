@@ -1,0 +1,149 @@
+---
+// A click-to-load YouTube embed. Nothing from YouTube is requested until the
+// visitor presses play, which keeps the page fast and avoids loading their
+// tracking scripts on every page view. The poster image is the one exception,
+// and it's lazily loaded.
+
+interface Props {
+  id: string;
+  title: string;
+  caption?: string;
+}
+
+const { id, title, caption } = Astro.props;
+---
+
+<figure class="video">
+  <div class="video-frame" data-video-id={id} data-video-title={title}>
+    <img
+      class="poster"
+      src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      width="480"
+      height="360"
+    />
+    <button type="button" class="play">
+      <span class="glyph" aria-hidden="true">▶</span>
+      <span class="play-label">Play</span>
+      <span class="visually-hidden">{title}</span>
+    </button>
+  </div>
+
+  <figcaption>
+    {caption}
+    <a href={`https://www.youtube.com/watch?v=${id}`} rel="noopener">
+      Watch on YouTube
+    </a>
+  </figcaption>
+</figure>
+
+<style>
+  .video {
+    margin: 2.6rem 0 0;
+    max-width: 45rem;
+  }
+
+  .video-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--raised);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* hqdefault is 4:3 with letterboxing; crop it back to 16:9 */
+    transform: scale(1.35);
+  }
+
+  .play {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: color-mix(in srgb, var(--paper) 45%, transparent);
+    border: 0;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .play:hover {
+    background: color-mix(in srgb, var(--paper) 25%, transparent);
+  }
+
+  .glyph {
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--paper);
+    background: var(--ink);
+    border-radius: 50%;
+    width: 3.4rem;
+    height: 3.4rem;
+    display: grid;
+    place-items: center;
+    padding-left: 0.2rem;
+  }
+
+  .play-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    margin-top: 0.8rem;
+  }
+
+  figcaption a {
+    white-space: nowrap;
+  }
+</style>
+
+<script>
+  // Styles are applied inline rather than by class: an iframe created here
+  // never receives Astro's scoped-style attribute, so a stylesheet rule
+  // would not match it.
+  for (const frame of document.querySelectorAll('.video-frame[data-video-id]')) {
+    const button = frame.querySelector('button');
+    if (!button) continue;
+
+    button.addEventListener(
+      'click',
+      () => {
+        const id = frame.dataset.videoId;
+        const iframe = document.createElement('iframe');
+
+        iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        iframe.title = frame.dataset.videoTitle || 'Video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = '0';
+        iframe.style.display = 'block';
+
+        frame.replaceChildren(iframe);
+      },
+      { once: true }
+    );
+  }
+</script>

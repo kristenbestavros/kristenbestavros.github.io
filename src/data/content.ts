@@ -7,7 +7,7 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/kristen-bestavros',
   // Drop a real photo in public/ and point this at it (a square JPG or PNG
   // around 600x600 is plenty — it renders as a circle).
-  portrait: '/portrait.svg',
+  portrait: '/portrait.jpg',
   portraitAlt: 'Kristen Bestavros',
   // Used for <title> and meta description only; not displayed as a headline.
   metaDescription:
@@ -156,20 +156,22 @@ export const projects: Project[] = [
   },
   {
     slug: 'polarization',
-    title: 'Computational modeling of political polarization',
+    title: 'The Persuasion Equation',
     meta: '2025 · Kilachand Honors',
     blurb:
-      'An agent-based model built on the cognitive–motivational framework of Jost et al., simulating how information spreads and ideology shifts. Studied how individual-level cognitive bias produces population-level polarization.',
-    tags: ['agent-based modeling', 'AnyLogic', 'social simulation'],
+      'An agent-based model simulating the interplay of personality and message factors in political polarization, built on the cognitive\u2013motivational framework of Jost et al. Keystone project, presented at the Kilachand Keystone Symposium.',
+    tags: ['agent-based modeling', 'social simulation', 'AnyLogic'],
+    href: '/work/polarization',
     featured: true,
   },
   {
     slug: 'chapa',
-    title: 'Affordable housing access analysis',
-    meta: '2025 · CHAPA / SPARK',
+    title: 'Affordable housing access',
+    meta: '2025 · CHAPA / BU Spark!',
     blurb:
-      'Client work for a Massachusetts housing nonprofit: analyzed affordable housing application data for geographic mobility, demographic representation, and access disparities using statistical and geospatial methods.',
-    tags: ['geospatial', 'pandas', 'client work'],
+      'As part of a collaboration with CHAPA and BU Spark!, I worked with classmates to analyze property data and provide insights about applicant demographics. My primary contribution to the project was an interactive map of affordable housing applications across Massachusetts, showing applicant flow lines, demographic breakdowns, and more.',
+    tags: ['Folium', 'Leaflet', 'geospatial', 'client work'],
+    href: '/work/chapa',
     featured: true,
   },
 ];
