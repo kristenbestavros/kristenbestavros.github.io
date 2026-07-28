@@ -1,0 +1,67 @@
+---
+import type { Project } from '../data/content';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const Wrapper = project.href ? 'a' : 'div';
+---
+
+<Wrapper class="card" href={project.href}>
+  <p class="card-meta">{project.meta}</p>
+  <h3>{project.title}</h3>
+  <p class="card-blurb">{project.blurb}</p>
+  <ul class="tags">
+    {project.tags.map((t) => <li>{t}</li>)}
+  </ul>
+</Wrapper>
+
+<style>
+  .card {
+    display: block;
+    text-decoration: none;
+    background: var(--raised);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 1.3rem 1.4rem;
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .card + .card {
+    margin-top: 1rem;
+  }
+
+  a.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-meta {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.55rem;
+    max-width: none;
+  }
+
+  .card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.28rem;
+  }
+
+  a.card:hover h3 {
+    color: var(--accent);
+  }
+
+  .card-blurb {
+    margin: 0 0 0.9rem;
+    font-size: 0.94rem;
+    max-width: none;
+  }
+</style>

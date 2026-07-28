@@ -1,0 +1,517 @@
+---
+import Base from '../../layouts/Base.astro';
+import { TEMPLATES } from '../../scripts/anagrammer/templates.js';
+
+const repoUrl = 'https://github.com/kristenbestavros/anagrammer';
+---
+
+<Base
+  title="Anagrammer"
+  description="A hybrid Markov and phonotactics engine that rearranges any phrase into plausible names. Ported to run in the browser."
+>
+  <article class="section">
+    <header class="page-head">
+      <p class="label">2026 · personal · Python + browser port</p>
+      <div>
+        <h1 class="page-title">Anagrammer</h1>
+        <p class="lede head-lede">
+          When writing, I sometimes enjoy giving my characters names that are 
+          anagrams of some meaningful word or phrase. Doing this by hand is tedious,
+          so I made this tool to help me out. Given any input text, it rearranges every letter 
+          into fictional character names that sound plausible and pronounceable.
+        </p>
+      </div>
+    </header>
+
+    <section class="demo" aria-labelledby="demo-heading">
+      <h3 id="demo-heading" class="visually-hidden">Try it</h3>
+
+      <div class="demo-controls">
+        <div class="field field-wide">
+          <label class="label" for="ana-input">Phrase</label>
+          <input
+            id="ana-input"
+            type="text"
+            value="necessary evil"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="40"
+          />
+        </div>
+
+        <div class="field">
+          <label class="label" for="ana-dataset">Names</label>
+          <select id="ana-dataset">
+            <option value="both">All</option>
+            <option value="female">Feminine</option>
+            <option value="male">Masculine</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label" for="ana-template">Format</label>
+          <select id="ana-template">
+            <option value="">Auto</option>
+            {TEMPLATES.map((t) => <option value={t.label}>{t.label}</option>)}
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label" for="ana-temp">Sampling</label>
+          <select id="ana-temp">
+            <option value="ramp">Default ramp</option>
+            <option value="1.0">Conservative</option>
+            <option value="1.6">Balanced</option>
+            <option value="2.6">Diverse</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label" for="ana-count">Results</label>
+          <select id="ana-count">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+          </select>
+        </div>
+
+        <button id="ana-go" type="button" disabled>Loading model</button>
+      </div>
+
+      <div class="demo-extra">
+        <label class="check">
+          <input id="ana-allow-words" type="checkbox" />
+          <span>Allow real English words as names</span>
+        </label>
+        <label class="check seed">
+          <span class="label">Seed</span>
+          <input id="ana-seed" type="text" inputmode="numeric" placeholder="random" />
+        </label>
+      </div>
+
+      <div id="ana-out" class="demo-out" role="status" aria-live="polite">
+        <p class="out-msg">Fetching the trained model…</p>
+      </div>
+    </section>
+
+    <div class="body">
+      <h2 class="section-heading">How it works</h2>
+      <div class="prose">
+        <p>
+          The algorithm combines multiple generation tactics at different steps. A trigram
+          character model trained on about 106,000 real names decides what letter sequences
+          are the most name-like; a set of phonotactic rules ensure the names are pronounceable; and a
+          composite scoring function ranks hundreds of candidates and returns the best ones.
+        </p>
+        <p>
+          Generating a plausible name using a machine learning model based on real names
+          is not difficult, and there are many such generators available online. Making a name-like anagram
+          is more complicated, since the model can never simply take the most
+          likely next character; it can only choose from letters that haven't been used yet.
+        </p>
+
+        <h3>The pipeline</h3>
+        <ul>
+          <li>
+            <strong>Template selection.</strong> Ten name structures, from a
+            bare mononym to <em>First Middle Middle Last-Last</em>. Only the ones
+            whose length bounds fit your letter count are eligible, and
+            hyphenated surnames unlock at sixteen letters.
+          </li>
+          <li>
+            <strong>Guided construction.</strong> Each segment is built one
+            character at a time, sampling from the Markov distribution over
+            letters still available, with temperature controlling how closely it
+            follows the model. 
+          </li>
+          <li>
+            <strong>Phonotactic lookahead.</strong> Candidate letters that would
+            walk the segment into a dead end are filtered before they're
+            sampled — invalid onset clusters, more than three consonants in a
+            row, vowel pairs English doesn't use, a segment about to end with no
+            vowel in it at all.
+          </li>
+          <li>
+            <strong>Letter distribution.</strong> Any letters left stranded at
+            the end are inserted back into existing segments at whichever
+            position costs the least likelihood.
+          </li>
+          <li>
+            <strong>Composite scoring.</strong> Candidates are ranked on Markov
+            likelihood per character, length balance across segments, distance
+            from a natural ~40% vowel ratio, starting-letter variety, repeated
+            bigrams, and how cleanly the end of one segment runs into the start
+            of the next.
+          </li>
+          <li>
+            <strong>Filtering and diverse selection.</strong> Segments matching
+            any of ~8,000 common English words are rejected. Final picks are made
+            greedily with a penalty for reusing segments so that the list doesn't get saturated with ten
+            variations on one letter sequence.
+          </li>
+        </ul>
+
+        <h3>What this browser version leaves out</h3>
+        <p>
+          The full tool adds two refinement passes after construction:
+          hill-climbing that swaps individual letters between segments, then a
+          second pass that swaps whole syllables to find improvements
+          single-letter moves can't reach. Those are the most intricate part of
+          the codebase and the least visible on a single query, so they aren't
+          ported here.
+        </p>
+        <p>
+          Everything else is the same algorithm working from the same trained
+          model, and the scoring function agrees with the Python to six decimal
+          places. The command-line version also supports locking in a specific
+          first or last name, reproducible seeding, and verbose diagnostics.
+        </p>
+        <p>
+          <a class="arrow-link" href={repoUrl}>Source on GitHub</a>
+        </p>
+
+        <h3>Notes</h3>
+        <ul>
+          <li>
+            Everything runs in your browser. The model is a static file; nothing
+            you type is sent anywhere.
+          </li>
+          <li>
+            Name data comes from Kate Monk's Onomastikon (© 1997 Kate Monk),
+            covering naming traditions worldwide.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <style>
+    .head-lede {
+      margin-top: 1rem;
+    }
+
+    .body {
+      margin-top: 3.4rem;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+    }
+
+    .demo {
+      margin-top: 2.8rem;
+      background: var(--raised);
+      border: 1px solid var(--rule);
+      padding: 1.6rem;
+    }
+
+    .demo-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.3rem;
+      align-items: flex-end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      min-width: 7rem;
+    }
+
+    .field-wide {
+      flex: 1 1 14rem;
+    }
+
+    .demo input[type='text'],
+    .demo select {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      padding: 0.5rem 0.6rem;
+      width: 100%;
+    }
+
+    .demo button {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      border-radius: 2px;
+      padding: 0.62rem 1.1rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .demo button:hover:not(:disabled) {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .demo button:disabled {
+      background: var(--muted);
+      border-color: var(--muted);
+      cursor: default;
+    }
+
+    .demo-extra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.6rem;
+      align-items: center;
+      margin-top: 1.1rem;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .check input[type='checkbox'] {
+      accent-color: var(--accent);
+    }
+
+    .seed input {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      width: 7rem;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      padding: 0.3rem 0.45rem;
+      color: var(--ink);
+    }
+
+    .demo-out {
+      margin-top: 1.6rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--rule);
+      min-height: 8rem;
+    }
+
+    .demo-out :global(.out-msg) {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin: 0;
+      max-width: none;
+    }
+
+    .demo-out :global(.out-head) {
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 0 0 1rem;
+      max-width: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1.2rem;
+    }
+
+    .demo-out :global(.results) {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .demo-out :global(.results li) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.2rem 0.9rem;
+      align-items: baseline;
+      padding: 0.62rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .results li:last-child {
+      border-bottom: 0;
+    }
+
+    .demo-out :global(.rank) {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .demo-out :global(.name) {
+      font-family: var(--font-display);
+      font-size: 1.32rem;
+      line-height: 1.25;
+    }
+
+    .meta {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .meta .ok {
+      color: var(--accent);
+    }
+
+    .tmpl {
+      grid-column: 2;
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+      @media (max-width: 34rem) {
+      .demo-out :global(.results li) {
+        grid-template-columns: 1.4rem minmax(0, 1fr);
+      }
+    }
+  </style>
+
+  <script>
+    import { randomSeed } from '../../scripts/anagrammer/rng.js';
+
+    const $ = (id) => document.getElementById(id);
+    const out = $('ana-out');
+    const button = $('ana-go');
+    const seedField = $('ana-seed');
+
+    const worker = new Worker(
+      new URL('../../scripts/anagrammer/worker.js', import.meta.url),
+      { type: 'module' }
+    );
+
+    let busy = false;
+
+    function message(text) {
+      out.innerHTML = `<p class="out-msg">${text}</p>`;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"]/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]
+      );
+    }
+
+    worker.postMessage({
+      type: 'init',
+      url: new URL('/data/anagram-data.json', location.origin).href,
+    });
+
+    worker.onmessage = (event) => {
+      const msg = event.data;
+
+      if (msg.type === 'ready') {
+        button.disabled = false;
+        button.textContent = 'Generate names';
+        run();
+        return;
+      }
+
+      if (msg.type === 'failed') {
+        busy = false;
+        button.disabled = false;
+        button.textContent = 'Generate names';
+        message(`Something went wrong: ${escapeHtml(msg.message)}`);
+        return;
+      }
+
+      if (msg.type === 'results') {
+        busy = false;
+        button.disabled = false;
+        button.textContent = 'Generate names';
+
+        if (msg.error === 'too-short') {
+          message('Needs at least three letters.');
+          return;
+        }
+        if (msg.error === 'too-long') {
+          message(
+            `${msg.letters.length} letters is more than the longest name format can hold. Try 35 or fewer.`
+          );
+          return;
+        }
+        if (msg.error === 'template-unfit') {
+          const [lo, hi] = msg.templateRange;
+          message(
+            `That format takes ${lo}–${hi} letters and you gave it ${msg.letters.length}. Try Auto, or a different format.`
+          );
+          return;
+        }
+        if (!msg.results.length) {
+          message(
+            'No arrangement found. These letters are awkward — try a different format, more conservative sampling, or a phrase with more vowels.'
+          );
+          return;
+        }
+
+        // To show diagnostics again, add back inside the <li>:
+        //   <span class="meta">${r.score.toFixed(1)} · ${r.exact ? 'exact' : 'mismatch'}</span>
+        //   <span class="tmpl">${escapeHtml(r.template)}</span>
+        // and restore the third grid column on .results li.
+        const rows = msg.results
+          .map(
+            (r) => `
+            <li>
+              <span class="name">${escapeHtml(r.name)}</span>
+            </li>`
+          )
+          .join('');
+
+        out.innerHTML =
+          `<p class="out-head"><span>${msg.letters.length} letters: ${escapeHtml(
+            msg.letters.split('').sort().join('')
+          )}</span><span>seed ${msg.seed}</span></p>` +
+          `<ul class="results">${rows}</ul>`;
+      }
+    };
+
+    function run() {
+      if (busy) return;
+      busy = true;
+      button.disabled = true;
+      button.textContent = 'Working';
+      message('Searching for arrangements…');
+
+      const tempChoice = $('ana-temp').value;
+      const temps =
+        tempChoice === 'ramp'
+          ? {}
+          : { tempMin: parseFloat(tempChoice), tempMax: parseFloat(tempChoice) };
+
+      const typedSeed = seedField.value.trim();
+      const seed = /^\d+$/.test(typedSeed) ? parseInt(typedSeed, 10) : randomSeed();
+
+      worker.postMessage({
+        type: 'generate',
+        phrase: $('ana-input').value,
+        options: {
+          dataset: $('ana-dataset').value,
+          nResults: parseInt($('ana-count').value, 10),
+          templateLabel: $('ana-template').value || null,
+          allowWords: $('ana-allow-words').checked,
+          seed,
+          ...temps,
+        },
+      });
+    }
+
+    button.addEventListener('click', run);
+    $('ana-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') run();
+    });
+  </script>
+</Base>

@@ -1,0 +1,98 @@
+---
+import '../styles/global.css';
+import Sidebar from '../components/Sidebar.astro';
+import { site } from '../data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.name, description = site.metaDescription } = Astro.props;
+const pageTitle =
+  title === site.name ? `${site.name} — Data Science & AI Safety` : `${title} — ${site.name}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <div class="frame">
+      <Sidebar />
+      <main id="main" class="main">
+        <slot />
+      </main>
+    </div>
+
+    <style>
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.6rem 1rem;
+        z-index: 10;
+      }
+      .skip:focus {
+        left: 0;
+      }
+    </style>
+
+    <script>
+      // Highlights the sidebar link for whichever section is currently in
+      // view. Exits immediately on pages that have no anchored sections.
+      const links = Array.from(document.querySelectorAll('[data-section-link]'));
+      const sections = links
+        .map((link) => document.getElementById(link.dataset.sectionLink))
+        .filter(Boolean);
+
+      if (links.length && sections.length) {
+        const setActive = (id) => {
+          for (const link of links) {
+            link.classList.toggle('is-active', link.dataset.sectionLink === id);
+          }
+        };
+
+        const update = () => {
+          const atBottom =
+            window.innerHeight + window.scrollY >= document.body.scrollHeight - 10;
+          if (atBottom) {
+            setActive(sections[sections.length - 1].id);
+            return;
+          }
+          if (window.scrollY < 60) {
+            setActive(sections[0].id);
+            return;
+          }
+          const current = [...sections]
+            .reverse()
+            .find((s) => s.getBoundingClientRect().top <= window.innerHeight * 0.3);
+          setActive((current || sections[0]).id);
+        };
+
+        const observer = new IntersectionObserver(update, { threshold: 0 });
+        sections.forEach((section) => observer.observe(section));
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+      }
+    </script>
+  </body>
+</html>

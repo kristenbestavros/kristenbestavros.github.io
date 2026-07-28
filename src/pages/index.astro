@@ -1,0 +1,274 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import {
+  intro,
+  strands,
+  experience,
+  education,
+  projects,
+  publications,
+  personal,
+} from '../data/content';
+---
+
+<Base>
+  <section id="about" class="section">
+    <h2 class="section-heading">About me</h2>
+    <div class="prose">
+      {intro.map((para) => <p>{para}</p>)}
+    </div>
+
+    <ul class="strands">
+      {
+        strands.map((strand) => (
+          <li>
+            <p class="strand-label">{strand.label}</p>
+            <p class="strand-text">{strand.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="experience" class="section">
+    <h2 class="section-heading">Experience</h2>
+
+    <ol class="timeline">
+      {
+        experience.map((role) => (
+          <li>
+            <p class="period">{role.period}</p>
+            <h3>{role.role}</h3>
+            <p class="org">{role.org}</p>
+            <ul class="points">
+              {role.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+            <ul class="tags">
+              {role.tags.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+
+    <h3 class="sub-heading">Education</h3>
+    <ol class="timeline compact">
+      {
+        education.map((entry) => (
+          <li>
+            <p class="period">{entry.period}</p>
+            <h3>{entry.degree}</h3>
+            <p class="org">{entry.org}</p>
+            <p class="detail">{entry.detail}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section id="projects" class="section">
+    <h2 class="section-heading">Projects</h2>
+    {projects.map((project) => <ProjectCard project={project} />)}
+    <p class="more">
+      <a class="arrow-link" href="/work">Fuller writeups</a>
+    </p>
+  </section>
+
+  <section id="writing-published" class="section">
+    <h2 class="section-heading">Published work</h2>
+    <ul class="pubs">
+      {
+        publications.map((pub) => (
+          <li>
+            <p class="pub-title">
+              {pub.href ? <a href={pub.href}>{pub.title}</a> : pub.title}
+            </p>
+            <p class="pub-meta">
+              {pub.authors} · <em>{pub.venue}</em>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="elsewhere" class="section">
+    <h2 class="section-heading">Hobbies & Interests</h2>
+    <div class="personal">
+      {personal.map((para) => <p>{para}</p>)}
+    </div>
+  </section>
+
+  <style>
+    .strands {
+      list-style: none;
+      margin: 2rem 0 0;
+      padding: 0;
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    @media (min-width: 46rem) {
+      .strands {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.4rem;
+      }
+    }
+
+    .strand-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 0.45rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--mark);
+      display: inline-block;
+      max-width: none;
+    }
+
+    .strand-text {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+      max-width: none;
+    }
+
+    .timeline {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .timeline > li {
+      position: relative;
+      padding: 0 0 1.8rem 1.3rem;
+      border-left: 1px solid var(--rule);
+    }
+
+    .timeline > li:last-child {
+      padding-bottom: 0;
+      border-left-color: transparent;
+    }
+
+    .timeline > li::before {
+      content: '';
+      position: absolute;
+      left: -4.5px;
+      top: 0.45rem;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .period {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 0.35rem;
+      max-width: none;
+    }
+
+    .timeline h3 {
+      font-size: 1.16rem;
+      margin: 0 0 0.2rem;
+    }
+
+    .org {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0 0 0.7rem;
+      max-width: none;
+    }
+
+    .points {
+      margin: 0 0 0.8rem;
+      padding-left: 1.05rem;
+    }
+
+    .points li {
+      font-size: 0.92rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .detail {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0;
+      max-width: none;
+    }
+
+    .sub-heading {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 2.4rem 0 1.2rem;
+    }
+
+    .compact > li {
+      padding-bottom: 1.4rem;
+    }
+
+    .more {
+      margin: 1.4rem 0 0;
+    }
+
+    .pubs {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .pubs li {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .pubs li:first-child {
+      padding-top: 0;
+    }
+
+    .pubs li:last-child {
+      border-bottom: 0;
+    }
+
+    .pub-title {
+      margin: 0 0 0.25rem;
+      font-family: var(--font-display);
+      font-size: 1.06rem;
+      line-height: 1.35;
+    }
+
+    .pub-meta {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .personal {
+      font-family: var(--font-display);
+      font-size: 1.12rem;
+      line-height: 1.55;
+    }
+
+    .personal p {
+      max-width: var(--measure);
+    }
+
+    .personal p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</Base>

@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import { essays } from '../../data/content';
+
+const published = essays.filter((e) => !e.draft);
+---
+
+<Base title="Writing" description="Occasional essays on LLM safety and evaluation.">
+  <section class="section">
+    <div>
+      <h2 class="section-heading">Writing</h2>
+      <div>
+        <h1 class="page-title">Notes on the work</h1>
+        <p class="lede intro">
+          Occasional pieces, published when there's something worth saying. Not a
+          blog — nothing here is on a schedule.
+        </p>
+      </div>
+    </div>
+
+    <div class="list">
+      {
+        published.length === 0 ? (
+          <p class="note">Nothing published yet. The first piece is in progress.</p>
+        ) : (
+          <ul class="essays">
+            {published.map((essay) => (
+              <li>
+                <p class="label essay-date">{essay.date}</p>
+                <div>
+                  <h3>
+                    <a href={`/writing/${essay.slug}`}>{essay.title}</a>
+                  </h3>
+                  <p>{essay.standfirst}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <style>
+    .intro {
+      margin-top: 1rem;
+    }
+
+    .list {
+      margin-top: 2.6rem;
+    }
+
+    .essays {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .essays li {
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .essay-date {
+      padding-top: 0.35rem;
+    }
+
+    .essays h3 {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</Base>

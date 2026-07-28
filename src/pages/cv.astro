@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/content';
+---
+
+<Base title="CV" description="Curriculum vitae and contact details for Kristen Bestavros.">
+  <section class="section">
+    <div>
+      <h2 class="section-heading">CV</h2>
+      <div>
+        <h1 class="page-title">Curriculum vitae</h1>
+        <p class="lede intro">
+          Research-oriented by default. There's a version weighted toward
+          engineering and applied work if that's a better fit for what you're
+          hiring for.
+        </p>
+
+        <div class="downloads">
+          <a class="download primary" href="/cv/kristen-bestavros-cv-research.pdf">
+            <span class="dl-title">Research CV</span>
+            <span class="dl-meta">PDF · publications, methods, current work</span>
+          </a>
+          <a class="download" href="/cv/kristen-bestavros-cv-industry.pdf">
+            <span class="dl-title">Applied CV</span>
+            <span class="dl-meta">PDF · tooling, shipped projects, skills</span>
+          </a>
+        </div>
+
+        <h3>Contact</h3>
+        <ul class="contact">
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><a href={site.github} rel="noopener">github.com/kristenbestavros</a></li>
+          <li><a href={site.linkedin} rel="noopener">linkedin.com/in/kristen-bestavros</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .intro {
+      margin-top: 1rem;
+    }
+
+    .downloads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 2.4rem 0 3rem;
+    }
+
+    .download {
+      flex: 1 1 15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1.1rem 1.2rem;
+      background: var(--raised);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      text-decoration: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .download:hover {
+      border-color: var(--accent);
+    }
+
+    .download.primary {
+      border-left: 3px solid var(--mark);
+    }
+
+    .dl-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+    }
+
+    .dl-meta {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    .contact {
+      list-style: none;
+      padding: 0;
+      margin: 0.8rem 0 0;
+    }
+
+    .contact li {
+      padding: 0.45rem 0;
+    }
+  </style>
+</Base>

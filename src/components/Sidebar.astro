@@ -1,0 +1,191 @@
+---
+import { site, nav, pageNav } from '../data/content';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const onHome = path === '/';
+---
+
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <img
+      class="portrait"
+      src={site.portrait}
+      alt={site.portraitAlt}
+      width="320"
+      height="320"
+      loading="eager"
+      decoding="async"
+    />
+
+    {
+      onHome ? (
+        <h1 class="name">{site.name}</h1>
+      ) : (
+        <p class="name">
+          <a href="/">{site.name}</a>
+        </p>
+      )
+    }
+    <p class="role">{site.role}</p>
+
+    <ul class="contacts">
+      <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      <li><a href={site.github} rel="me noopener">GitHub</a></li>
+      <li><a href={site.linkedin} rel="me noopener">LinkedIn</a></li>
+    </ul>
+
+    <nav class="sidenav" aria-label="Primary">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} data-section-link={item.section}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <ul class="pages">
+        {
+          pageNav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={!onHome && path.startsWith(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <p class="sidebar-foot label">{site.location}</p>
+</aside>
+
+<style>
+  .sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .portrait {
+    width: var(--portrait-size);
+    height: var(--portrait-size);
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--rule);
+    background: var(--raised);
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 2.55vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 1.4rem 0 0.4rem;
+    max-width: none;
+  }
+
+  .name a {
+    text-decoration: none;
+  }
+
+  .role {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--flag);
+    margin: 0 0 0.5rem;
+    max-width: none;
+  }
+
+  .contacts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+    font-size: .9rem;
+  }
+
+  .sidenav {
+    margin-top: 1.6rem;
+  }
+
+  .sidenav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidenav a {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    padding: 0.42rem 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .sidenav a:hover {
+    color: var(--ink);
+  }
+
+  /* Set by the scroll-spy script, and by aria-current on inner pages. */
+  .sidenav a.is-active,
+  .sidenav a[aria-current='page'] {
+    color: var(--ink);
+    border-bottom-color: var(--flag);
+  }
+
+  .pages {
+    margin-top: 1.3rem !important;
+    padding-top: 1.1rem !important;
+    border-top: 1px solid var(--rule);
+  }
+
+  .sidebar-foot {
+    display: none;
+  }
+
+  @media (min-width: 62rem) {
+    .sidebar-foot {
+      display: block;
+      padding-top: 2rem;
+    }
+  }
+
+  /* Stacked layout: the sidebar becomes a header, so the nav sits inline. */
+  @media (max-width: 61.99rem) {
+    .sidenav {
+      margin-top: 1.8rem;
+      padding-bottom: 1.6rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .sidenav ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 1.3rem;
+    }
+
+    .pages {
+      margin-top: 0.4rem !important;
+      padding-top: 0.4rem !important;
+      border-top: 0;
+    }
+  }
+</style>

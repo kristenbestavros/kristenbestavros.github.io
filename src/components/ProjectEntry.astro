@@ -1,0 +1,53 @@
+---
+import type { Project } from '../data/content';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<article class="entry margin-grid">
+  <p class="label entry-meta">{project.meta}</p>
+
+  <div class="entry-body">
+    <h3>
+      {
+        project.href ? (
+          <a href={project.href}>{project.title}</a>
+        ) : (
+          project.title
+        )
+      }
+    </h3>
+    <p class="entry-blurb">{project.blurb}</p>
+    <ul class="tags">
+      {project.tags.map((t) => <li>{t}</li>)}
+    </ul>
+  </div>
+</article>
+
+<style>
+  .entry {
+    padding: 1.9rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .entry-meta {
+    padding-top: 0.35rem;
+  }
+
+  .entry-body h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .entry-body h3 a {
+    text-decoration-color: var(--rule);
+  }
+
+  .entry-blurb {
+    margin-bottom: 0.9rem;
+    color: var(--ink);
+  }
+</style>

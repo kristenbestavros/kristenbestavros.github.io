@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/content';
+---
+
+<Base
+  title="Work"
+  description="Projects in LLM safety, red-teaming, and computational modeling."
+>
+  <section class="section">
+    <div>
+      <h2 class="section-heading">Work</h2>
+      <div>
+        <h1 class="page-title">All Work</h1>
+        <p class="lede intro">
+          Includes browser demos, video presentations, and more, depending on the project.
+        </p>
+      </div>
+    </div>
+
+    <div class="list">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <style>
+    .intro {
+      margin-top: 1rem;
+    }
+
+    .list {
+      margin-top: 2.6rem;
+    }
+  </style>
+</Base>
