@@ -43,14 +43,14 @@ const hasTalkRecording = false;
           layers: 109 properties, the applicant origins feeding them, and
           roughly 750 lines connecting the two. Each property is a pie chart
           placed at its location, sized by how many applications it received and
-          divided by the racial and ethnic composition of its applicant pool, so
-          volume and composition read at a glance without opening anything.
+          divided by the racial and ethnic composition of its applicant pool. This makes
+          it possible to roughly evaluate property popularity and applicant demographics at a glance.
         </p>
         <p>
-          The layer that does the most work is the flow lines. Every applicant
-          origin is joined to the property they applied to, which turns an
-          abstract question — how far do people search for affordable housing? —
-          into something you can see. Hovering a flow gives the count from that
+          The layer with the most utility is the flow lines. Every applicant
+          origin is joined to the property they applied to, which helps visualize
+          both the distance and diversity of applicant hometowns to specific properties.
+          Hovering over a flow shows a popup with information on the count from that
           origin, the age distribution, and the demographic breakdown of the
           people it represents. Opening a property gives its details alongside
           its applicant statistics: median age and range, median distance
@@ -61,9 +61,9 @@ const hasTalkRecording = false;
           The remaining layers are applicant origins on their own and a price
           heatmap, and there's a filter panel over the whole thing — minimum
           applications, maximum price, maximum distance, maximum age — so the
-          map can be narrowed to a question rather than browsed. Filtering
+          map can be narrowed down for easy viewing. Filtering
           applies across every layer at once, which is where most of the custom
-          JavaScript went; Folium will render the layers, but the
+          JavaScript comes from; Folium will render the layers, but the
           cross-filtering, the flow highlighting, and the pie markers all had to
           be written on top of it.
         </p>
