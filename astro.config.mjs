@@ -6,7 +6,7 @@ import { defineConfig } from 'astro/config';
 // If you later point a custom domain at it, change `site` to that domain and
 // add a `public/CNAME` file containing the bare domain.
 export default defineConfig({
-  site: 'https://kristenbestavros.github.io',
+  site: 'https://kristen.bestavros.net',
   trailingSlash: 'ignore',
   build: {
     format: 'directory',
