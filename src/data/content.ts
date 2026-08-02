@@ -45,7 +45,7 @@ export const intro = [
    project on simulating political polarization with an agent-based model. Since
    then I've worked on a range of projects, including data analysis for CHAPA, an
    affordable housing nonprofit based in Massachusetts. I've also been working on personal
-   projects, ranging from a name anagram generator toan automated adversarial safety training
+   projects, ranging from a name anagram generator to an automated adversarial safety training
    loop for LLMs. You can read more about my work in the Projects section below -- you can even
    try out the anagram generator in your browser!`,
 ];
