@@ -193,7 +193,7 @@ export const publications = [
     authors: 'Bestavros, K.',
     title: 'Game Development to Gameplay: Women in the Video Game Industry',
     venue: 'Kaleidoscope, vol. 1, 2022',
-    href: 'https://www.bu.edu/khc/files/2022/09/Kaleidoscope-Volume-1.pdf',
+    href: 'https://www.bu.edu/khc/files/2023/02/Kaleidoscope-Volume-1.pdf',
   },
 ];
 
